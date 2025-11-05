@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'register.dart';
+import 'package:iot_thi/screens/main_screen.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +15,64 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false; // hiển thị vòng tròn chờ
+
+  Future<void> login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vui lòng nhập email và mật khẩu")),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final url = Uri.parse("http://localhost:5000/auth/login");
+
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email, "password": password}),
+      );
+
+      setState(() => isLoading = false);
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        // ✅ Đăng nhập thành công
+        final token = data["access_token"];
+        final user = data["user"];
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Chào ${user["name"]}! Đăng nhập thành công."),
+          ),
+        );
+
+        // 👉 Chuyển sang màn hình chính (dashboard)
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainScreen()),
+        );
+      } else {
+        // ❌ Thông báo lỗi từ backend
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data["error"] ?? "Đăng nhập thất bại")),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Lỗi kết nối server: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: const Icon(Icons.menu_book, color: Colors.white, size: 36),
+                  child: const Icon(
+                    Icons.menu_book,
+                    color: Colors.white,
+                    size: 36,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -62,7 +127,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   "Đăng nhập vào hệ thống quản lý trang trại thông minh",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.roboto(fontSize: 14, color: Colors.grey.shade600),
+                  style: GoogleFonts.roboto(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
                 const SizedBox(height: 24),
 
@@ -105,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       backgroundColor: Colors.transparent,
                       elevation: 0,
                     ),
-                    onPressed: () {},
+                    onPressed: isLoading ? null : login,
                     child: Ink(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -136,12 +204,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Chưa có tài khoản?", style: GoogleFonts.roboto(fontSize: 14)),
+                    Text(
+                      "Chưa có tài khoản?",
+                      style: GoogleFonts.roboto(fontSize: 14),
+                    ),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterScreen(),
+                          ),
                         );
                       },
                       child: const Text("Đăng ký ngay"),

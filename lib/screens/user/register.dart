@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,9 +16,69 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController farmController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   String? selectedAccountType;
+
+  Future<void> registerUser() async {
+    if (nameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        farmController.text.isEmpty ||
+        selectedAccountType == null ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vui lòng điền đầy đủ thông tin.")),
+      );
+      return;
+    }
+
+    // 🔹 Kiểm tra xác nhận mật khẩu
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Mật khẩu xác nhận không khớp.")),
+      );
+      return; // ⛔ Dừng lại, không gửi request
+    }
+
+    final url = Uri.parse('http://127.0.0.1:5000/auth/register');
+
+    final body = {
+      "name": nameController.text,
+      "email": emailController.text,
+      "farm_name": farmController.text,
+      "account_type": selectedAccountType ?? "",
+      "password": passwordController.text,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Đăng ký thành công!")));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      } else {
+        final error = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error["error"] ?? "Lỗi không xác định")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Không thể kết nối server: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +115,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: const Icon(Icons.menu_book, color: Colors.white, size: 36),
+                  child: const Icon(
+                    Icons.menu_book,
+                    color: Colors.white,
+                    size: 36,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -67,7 +133,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Text(
                   "Đăng ký tài khoản mới để sử dụng FarmSmart",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.roboto(fontSize: 14, color: Colors.grey.shade600),
+                  style: GoogleFonts.roboto(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
                 const SizedBox(height: 24),
 
@@ -114,9 +183,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 DropdownButtonFormField<String>(
                   value: selectedAccountType,
                   items: const [
-                    DropdownMenuItem(value: "Nông dân cá nhân ", child: Text("Nông dân cá nhân ")),
-                    DropdownMenuItem(value: "Hợp tác xã ", child: Text("Hợp tác xã")),
-                    DropdownMenuItem(value: "Doanh nghiệp" , child:Text("Doanh Nghiệp"))
+                    DropdownMenuItem(
+                      value: "Nông dân cá nhân ",
+                      child: Text("Nông dân cá nhân "),
+                    ),
+                    DropdownMenuItem(
+                      value: "Hợp tác xã ",
+                      child: Text("Hợp tác xã"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Doanh nghiệp",
+                      child: Text("Doanh Nghiệp"),
+                    ),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -171,7 +249,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       backgroundColor: Colors.transparent,
                       elevation: 0,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      registerUser();
+                    },
                     child: Ink(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -202,12 +282,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Đã có tài khoản?", style: GoogleFonts.roboto(fontSize: 14)),
+                    Text(
+                      "Đã có tài khoản?",
+                      style: GoogleFonts.roboto(fontSize: 14),
+                    ),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
                         );
                       },
                       child: const Text("Đăng nhập"),
