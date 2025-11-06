@@ -4,7 +4,10 @@ import 'home/home_screen.dart';
 import 'log/log_screen.dart';
 import 'production/production_screen.dart';
 import 'analytics/analytics_screen.dart';
+import 'package:iot_thi/screens/user/profile.dart';
 import 'control/control_screen.dart';
+import 'package:iot_thi/screens/user/login.dart';
+import 'package:iot_thi/services/auth_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -109,7 +112,9 @@ class _MainScreenState extends State<MainScreen> {
           ),
           // Nút profile
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              AuthService.showUserProfile(context);
+            },
             icon: const Icon(Icons.account_circle_outlined),
             color: Colors.black87,
           ),
@@ -127,15 +132,25 @@ class _MainScreenState extends State<MainScreen> {
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined), label: "Trang chủ"),
+            icon: Icon(Icons.home_outlined),
+            label: "Trang chủ",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.book_outlined), label: "Nhật ký"),
+            icon: Icon(Icons.book_outlined),
+            label: "Nhật ký",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.agriculture_outlined), label: "Sản xuất"),
+            icon: Icon(Icons.agriculture_outlined),
+            label: "Sản xuất",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_outlined), label: "Phân tích"),
+            icon: Icon(Icons.bar_chart_outlined),
+            label: "Phân tích",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings_remote_outlined), label: "Điều khiển"),
+            icon: Icon(Icons.settings_remote_outlined),
+            label: "Điều khiển",
+          ),
         ],
       ),
     );

@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from utils.database import db
 from models.user_model import User
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from bson import ObjectId
 from datetime import timedelta
 
 auth_bp = Blueprint("auth", __name__)
@@ -57,3 +58,26 @@ def login():
         "user": user_info,
         "access_token": access_token
     }), 200
+
+@auth_bp.route("/me", methods=["GET"])
+@jwt_required()
+def get_current_user():
+    try:
+        user_id = get_jwt_identity()  # Lấy user_id từ token
+
+        user = db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return jsonify({"error": "Không tìm thấy người dùng"}), 404
+
+        user_info = {
+            "id": str(user["_id"]),
+            "name": user.get("name"),
+            "email": user.get("email"),
+            "farm_name": user.get("farm_name"),
+            "account_type": user.get("account_type")
+        }
+
+        return jsonify({"user": user_info}), 200
+    except Exception as e:
+        print("ERROR:", e)
+        return jsonify({"error": str(e)}), 500

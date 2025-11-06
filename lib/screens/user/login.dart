@@ -4,6 +4,7 @@ import 'register.dart';
 import 'package:iot_thi/screens/main_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; // Lưu token
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  bool isLoading = false; // hiển thị vòng tròn chờ
+  bool isLoading = false;
 
   Future<void> login() async {
     final email = emailController.text.trim();
@@ -44,10 +45,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        // ✅ Đăng nhập thành công
+      if (response.statusCode == 200 && data["access_token"] != null) {
         final token = data["access_token"];
         final user = data["user"];
+
+        // ✅ Lưu token & thông tin người dùng
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString("access_token", token);
+        await prefs.setString("user_name", user["name"]);
+        await prefs.setString("user_email", user["email"]);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -55,13 +61,12 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
 
-        // 👉 Chuyển sang màn hình chính (dashboard)
+        // 👉 Chuyển sang màn hình chính
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const MainScreen()),
         );
       } else {
-        // ❌ Thông báo lỗi từ backend
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data["error"] ?? "Đăng nhập thất bại")),
         );
@@ -185,14 +190,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Container(
                         alignment: Alignment.center,
-                        child: Text(
-                          "Đăng nhập",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : Text(
+                                "Đăng nhập",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                   ),
