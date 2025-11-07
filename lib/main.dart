@@ -4,8 +4,14 @@ import 'package:iot_thi/screens/user/login.dart';
 import 'package:iot_thi/screens/user/register.dart';
 import 'core/app_theme.dart';
 import 'screens/main_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
+  await initializeDateFormatting('vi_VN', null);
+
   runApp(const FarmSmartApp());
 }
 
