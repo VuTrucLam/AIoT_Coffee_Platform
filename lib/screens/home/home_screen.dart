@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:iot_thi/services/weather_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -63,10 +64,10 @@ class _GreetingCardState extends State<GreetingCard> {
 
   String _getImageForTime() {
     final hour = DateTime.now().hour;
-    if (hour >= 5 && hour < 10) return 'assets/images/sang.png';
-    if (hour >= 10 && hour < 17) return 'assets/images/chieu.png';
-    if (hour >= 17 && hour < 22) return 'assets/images/toi.png';
-    return 'assets/images/night.png';
+    if (hour >= 5 && hour < 12) return 'assets/images/sang.png';
+    if (hour >= 12 && hour < 18) return 'assets/images/chieu.png';
+    // if (hour >= 17 && hour < 22) return 'assets/images/toi.png';
+    return 'assets/images/toi.png';
   }
 
   /// 📅 Trả về ngày hiện tại (định dạng tiếng Việt)
@@ -146,7 +147,10 @@ class _GreetingCardState extends State<GreetingCard> {
                       const SizedBox(width: 6),
                       Text(
                         getCurrentDate(),
-                        style: const TextStyle(color: Colors.black54),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       const Icon(
@@ -172,8 +176,8 @@ class _GreetingCardState extends State<GreetingCard> {
             const SizedBox(width: 12),
             Image.asset(
               _getImageForTime(),
-              height: 60,
-              width: 60,
+              height: 80,
+              width: 80,
               fit: BoxFit.contain,
             ),
           ],
@@ -290,102 +294,176 @@ class SensorDataCard extends StatelessWidget {
 //
 // ====== WIDGET THỜI TIẾT ======
 //
-class WeatherCard extends StatelessWidget {
+
+class WeatherCard extends StatefulWidget {
   const WeatherCard({super.key});
 
   @override
+  State<WeatherCard> createState() => _WeatherCardState();
+}
+
+class _WeatherCardState extends State<WeatherCard> {
+  Map<String, dynamic>? weatherData;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeather();
+  }
+
+  Future<void> _fetchWeather() async {
+    try {
+      // Lấy vị trí hiện tại
+      Position pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Gọi WeatherService
+      final data = await WeatherService.fetchWeather(
+        pos.latitude,
+        pos.longitude,
+      );
+
+      setState(() {
+        weatherData = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        weatherData = null;
+      });
+      print("Lỗi lấy dữ liệu thời tiết: $e");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Card(
+        margin: EdgeInsets.all(16),
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
+    if (weatherData == null) {
+      return const Card(
+        margin: EdgeInsets.all(16),
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Center(child: Text("Không thể lấy dữ liệu thời tiết")),
+        ),
+      );
+    }
+
+    String formattedTime = DateFormat('hh:mm a').format(DateTime.now());
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
+      elevation: 3,
+      margin: const EdgeInsets.all(16),
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Thời tiết hôm nay",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Icon(Icons.wb_sunny, color: Colors.orange),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "32°C",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+            // Bên trái
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Thời tiết hôm nay",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    weatherData!["location"] ?? "Không xác định",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    formattedTime,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.air, color: Colors.blueAccent, size: 22),
+                      const SizedBox(width: 6),
+                      Text(
+                        "${weatherData!["windSpeed"]} km/h",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "(${weatherData!["windDirection"]})",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 4),
-            const Text(
-              "Nắng ít mây",
-              style: TextStyle(color: Colors.black54, fontSize: 14),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Độ ẩm: 68%  |  Gió: 12 km/h",
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                WeatherForecast(
-                  icon: Icons.sunny,
-                  label: "Chiều",
-                  temp: "28°C",
-                ),
-                WeatherForecast(icon: Icons.cloud, label: "Tối", temp: "25°C"),
-                WeatherForecast(
-                  icon: Icons.sunny_snowing,
-                  label: "Mai",
-                  temp: "30°C",
-                ),
-              ],
+
+            // Bên phải
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    weatherData!["icon"] ?? "🌍",
+                    style: const TextStyle(fontSize: 36),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    weatherData!["description"] ?? "",
+                    style: const TextStyle(fontSize: 16, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "${weatherData!["temperature"]}°C",
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Độ ẩm: ${weatherData!["humidity"]}% | Áp suất: ${weatherData!["pressure"]} hPa",
+                    style: const TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class WeatherForecast extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String temp;
-
-  const WeatherForecast({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.temp,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.orange, size: 28),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.black54, fontSize: 13),
-        ),
-        Text(
-          temp,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
     );
   }
 }

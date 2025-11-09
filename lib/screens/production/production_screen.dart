@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class ProductionScreen extends StatelessWidget {
-  const ProductionScreen({super.key});
+  ProductionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +54,15 @@ class ProductionScreen extends StatelessWidget {
                   label: const Text("Xuất báo cáo"),
                 ),
                 const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: const Text("Phân tích AI"),
+                IntrinsicWidth(
+                  // ← THÊM DÒNG NÀY
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: const Text("Phân tích AI"),
+                  ),
                 ),
               ],
             ),
@@ -65,11 +70,29 @@ class ProductionScreen extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Thẻ thống kê
-          _buildStatCard("Tổng doanh thu", "45.2M VND", "+12.5%", Icons.savings_outlined, Colors.orange),
+          _buildStatCard(
+            "Tổng doanh thu",
+            "45.2M VND",
+            "+12.5%",
+            Icons.savings_outlined,
+            Colors.orange,
+          ),
           const SizedBox(height: 12),
-          _buildStatCard("Tổng chi phí", "28.8M VND", "+8.2%", Icons.money_off, Colors.green),
+          _buildStatCard(
+            "Tổng chi phí",
+            "28.8M VND",
+            "+8.2%",
+            Icons.money_off,
+            Colors.green,
+          ),
           const SizedBox(height: 12),
-          _buildStatCard("Lợi nhuận", "16.4M VND", "+4.2%", Icons.trending_up, Colors.blue),
+          _buildStatCard(
+            "Lợi nhuận",
+            "16.4M VND",
+            "+4.2%",
+            Icons.trending_up,
+            Colors.blue,
+          ),
           const SizedBox(height: 24),
 
           // Biểu đồ phân tích chi phí
@@ -106,6 +129,8 @@ class ProductionScreen extends StatelessWidget {
             height: 280,
             child: BarChart(
               BarChartData(
+                maxY: 3500,
+                minY: 0,
                 gridData: FlGridData(show: true),
                 titlesData: FlTitlesData(
                   bottomTitles: AxisTitles(
@@ -114,13 +139,13 @@ class ProductionScreen extends StatelessWidget {
                       getTitlesWidget: (value, meta) {
                         switch (value.toInt()) {
                           case 0:
-                            return const Text("Cà chua");
+                            return Text("Cà chua"); // Không const
                           case 1:
-                            return const Text("Rau xanh");
+                            return Text("Rau xanh");
                           case 2:
-                            return const Text("Dưa chuột");
+                            return Text("Dưa chuột");
                           case 3:
-                            return const Text("Ớt");
+                            return Text("Ớt");
                         }
                         return const Text("");
                       },
@@ -170,7 +195,13 @@ class ProductionScreen extends StatelessWidget {
   }
 
   // Widget card thống kê
-  Widget _buildStatCard(String title, String value, String change, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    String change,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -184,7 +215,10 @@ class ProductionScreen extends StatelessWidget {
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             Text(
               change,
               style: TextStyle(
@@ -228,7 +262,11 @@ class ProductionScreen extends StatelessWidget {
   // Biểu đồ đường
   LineChartBarData _lineChart(List<double> values, Color color) {
     return LineChartBarData(
-      spots: values.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
+      spots: values
+          .asMap()
+          .entries
+          .map((e) => FlSpot(e.key.toDouble(), e.value))
+          .toList(),
       isCurved: true,
       color: color,
       barWidth: 3,

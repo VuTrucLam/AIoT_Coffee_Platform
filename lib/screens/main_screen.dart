@@ -19,13 +19,13 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    LogScreen(),
-    ProductionScreen(),
-    AnalyticsScreen(),
-    ControlScreen(),
-  ];
+  // final List<Widget> _screens = const [
+  //   HomeScreen(),
+  //   LogScreen(),
+  //   ProductionScreen(),
+  //   AnalyticsScreen(),
+  //   ControlScreen(),
+  // ];
 
   final List<String> _titles = const [
     "Trang chủ",
@@ -33,6 +33,14 @@ class _MainScreenState extends State<MainScreen> {
     "Sản xuất",
     "Phân tích",
     "Điều khiển",
+  ];
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const LogScreen(),
+    ProductionScreen(),
+    AnalyticsScreen(),
+    const ControlScreen(),
   ];
 
   void _onItemTapped(int index) {

@@ -3,7 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AnalyticsScreen extends StatelessWidget {
-  const AnalyticsScreen({super.key});
+  AnalyticsScreen({super.key}); // ĐÃ XÓA const
 
   @override
   Widget build(BuildContext context) {
@@ -30,40 +30,46 @@ class AnalyticsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Bộ lọc + nút
-            Row(
-              children: [
-                _filterButton("Tất cả trang trại"),
-                const SizedBox(width: 10),
-                _filterButton("Năm hiện tại"),
-                const SizedBox(width: 10),
-                _filterButton("1/1/2024 - 1/9/2025", icon: Icons.calendar_today),
-                const Spacer(),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.picture_as_pdf, size: 18),
-                  label: const Text("Xuất báo cáo"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black87,
-                    side: const BorderSide(color: Colors.grey),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+            // BỘ LỌC: DÙNG IntrinsicWidth + Row + XÓA Spacer()
+            IntrinsicWidth(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _filterButton("Tất cả trang trại"),
+                  const SizedBox(width: 10),
+                  _filterButton("Năm hiện tại"),
+                  const SizedBox(width: 10),
+                  _filterButton(
+                    "1/1/2024 - 1/9/2025",
+                    icon: Icons.calendar_today,
                   ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3D5AFE),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  const SizedBox(width: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.picture_as_pdf, size: 18),
+                    label: const Text("Xuất báo cáo"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      side: const BorderSide(color: Colors.grey),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                    ),
                   ),
-                  child: const Text("Dự báo AI"),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3D5AFE),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    child: const Text("Dự báo AI"),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
 
-            // Thẻ thống kê (4 khối đầu)
+            // Thẻ thống kê
             _statCard(
               title: "Tổng doanh thu",
               value: "156.8M",
@@ -88,8 +94,6 @@ class AnalyticsScreen extends StatelessWidget {
               subtitle: "tối ưu hóa tài nguyên",
               icon: Icons.pie_chart,
             ),
-
-            // Thêm 3 thẻ tiếp
             _statCard(
               title: "Chất lượng sản phẩm",
               value: "92.3%",
@@ -131,7 +135,10 @@ class AnalyticsScreen extends StatelessWidget {
                       ),
                     ),
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                      ),
                     ),
                   ),
                   borderData: FlBorderData(show: false),
@@ -160,7 +167,10 @@ class AnalyticsScreen extends StatelessWidget {
                       ),
                     ),
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                      ),
                     ),
                   ),
                   borderData: FlBorderData(show: false),
@@ -193,20 +203,23 @@ class AnalyticsScreen extends StatelessWidget {
                         getTitlesWidget: (v, _) {
                           switch (v.toInt()) {
                             case 0:
-                              return const Text("Cà chua");
+                              return Text("Cà chua");
                             case 1:
-                              return const Text("Dưa chuột");
+                              return Text("Dưa chuột");
                             case 2:
-                              return const Text("Ớt");
+                              return Text("Ớt");
                             case 3:
-                              return const Text("Rau xanh");
+                              return Text("Rau xanh");
                           }
                           return const Text("");
                         },
                       ),
                     ),
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                      ),
                     ),
                   ),
                   borderData: FlBorderData(show: false),
@@ -241,12 +254,21 @@ class AnalyticsScreen extends StatelessWidget {
 
             // Thông tin AI
             _chartTitle("Thông tin chi tiết từ AI"),
-            _aiInfoTile("Dự báo năng suất", "87% tin cậy",
-                "Năng suất dự kiến tăng 15% trong 3 tháng tới nhờ điều kiện thời tiết thuận lợi"),
-            _aiInfoTile("Cảnh báo chi phí", "73% tin cậy",
-                "Chi phí phân bón có thể tăng 8% do giá nguyên liệu tăng"),
-            _aiInfoTile("Cơ hội thị trường", "91% tin cậy",
-                "Nhu cầu rau hữu cơ tăng 25%, nên chuyển đổi 30% diện tích"),
+            _aiInfoTile(
+              "Dự báo năng suất",
+              "87% tin cậy",
+              "Năng suất dự kiến tăng 15% trong 3 tháng tới nhờ điều kiện thời tiết thuận lợi",
+            ),
+            _aiInfoTile(
+              "Cảnh báo chi phí",
+              "73% tin cậy",
+              "Chi phí phân bón có thể tăng 8% do giá nguyên liệu tăng",
+            ),
+            _aiInfoTile(
+              "Cơ hội thị trường",
+              "91% tin cậy",
+              "Nhu cầu rau hữu cơ tăng 25%, nên chuyển đổi 30% diện tích",
+            ),
           ],
         ),
       ),
@@ -295,8 +317,10 @@ class AnalyticsScreen extends StatelessWidget {
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: Text(change,
-                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+              child: Text(
+                change,
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
             ),
           ],
         ),
@@ -345,8 +369,10 @@ class AnalyticsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         subtitle: Text(desc),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -354,8 +380,10 @@ class AnalyticsScreen extends StatelessWidget {
             color: Colors.black,
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Text(trust,
-              style: const TextStyle(color: Colors.white, fontSize: 12)),
+          child: Text(
+            trust,
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
         ),
       ),
     );
