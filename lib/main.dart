@@ -5,11 +5,15 @@ import 'package:iot_thi/screens/user/register.dart';
 import 'core/app_theme.dart';
 import 'screens/main_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // THÊM DÒNG NÀY
+  );
   await initializeDateFormatting('vi_VN', null);
 
   runApp(const FarmSmartApp());

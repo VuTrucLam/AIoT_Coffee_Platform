@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "122143735547",
+    "firebase_url": "https://iot1-24d06-default-rtdb.firebaseio.com",
+    "project_id": "iot1-24d06",
+    "storage_bucket": "iot1-24d06.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122143735547:android:8d152ba350978338b17a5e",
+        "android_client_info": {
+          "package_name": "com.example.iot_thi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANndkaPmEnQXtsKoPhHwQh69GbW3Mh8pk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
