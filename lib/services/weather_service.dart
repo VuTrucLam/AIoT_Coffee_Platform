@@ -62,6 +62,8 @@ class WeatherService {
         return "Mưa";
       case "Drizzle":
         return "Mưa phùn";
+      case "light rain":
+        return "Mưa phùn";
       case "Thunderstorm":
         return "Dông";
       case "Snow":

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:iot_thi/services/weather_service.dart';
 import 'package:iot_thi/services/sensor_service.dart';
+import 'package:iot_thi/services/notification_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -188,198 +189,70 @@ class _GreetingCardState extends State<GreetingCard> {
   }
 }
 
+// === CẢNH BÁO 3 MỨC ĐỘ ===
+enum AlertLevel { safe, warning, danger }
+
+AlertLevel getAlertLevel(String sensor, double value) {
+  switch (sensor) {
+    case 'temperature':
+      if (value >= 18 && value <= 28) return AlertLevel.safe;
+      if ((value > 28 && value <= 32) || (value >= 15 && value < 18))
+        return AlertLevel.warning;
+      return AlertLevel.danger;
+
+    case 'soilMoisture':
+      if (value >= 50 && value <= 80) return AlertLevel.safe;
+      if ((value >= 40 && value < 50) || (value > 80 && value <= 90))
+        return AlertLevel.warning;
+      return AlertLevel.danger;
+
+    case 'light':
+      if (value >= 100 && value <= 1000) return AlertLevel.safe;
+      if ((value >= 50 && value < 100) || (value > 1000 && value <= 1500))
+        return AlertLevel.warning;
+      return AlertLevel.danger;
+
+    case 'ph':
+      if (value >= 6.0 && value <= 7.5) return AlertLevel.safe;
+      if ((value >= 5.5 && value < 6.0) || (value > 7.5 && value <= 8.0))
+        return AlertLevel.warning;
+      return AlertLevel.danger;
+
+    case 'pressure':
+      if (value >= 950 && value <= 1050) return AlertLevel.safe;
+      if ((value >= 900 && value < 950) || (value > 1050 && value <= 1100))
+        return AlertLevel.warning;
+      return AlertLevel.danger;
+
+    case 'N':
+    case 'P':
+    case 'K':
+      if (value >= 10 && value <= 50) return AlertLevel.safe;
+      if ((value >= 5 && value < 10) || (value > 50 && value <= 100))
+        return AlertLevel.warning;
+      return AlertLevel.danger;
+
+    default:
+      return AlertLevel.safe;
+  }
+}
+
+Color getAlertColor(AlertLevel level) {
+  switch (level) {
+    case AlertLevel.safe:
+      return const Color.fromRGBO(91, 233, 96, 1).withOpacity(0.4);
+    case AlertLevel.warning:
+      return Colors.orange.withOpacity(0.2);
+    case AlertLevel.danger:
+      return Colors.red.withOpacity(0.3);
+    default:
+      return Colors.white.withOpacity(0.1);
+  }
+}
+
 //
-// ====== WIDGET DỮ LIỆU CẢM BIẾN ======
+// ====== WIDGET THẺ CHÀO BUỔI SÁNG ======
 //
-
-// class SensorDataCard extends StatelessWidget {
-//   const SensorDataCard({super.key});
-
-//   Widget buildSensorItem(
-//     IconData icon,
-//     String value,
-//     String label,
-//     String status,
-//     Color color,
-//   ) {
-//     return Expanded(
-//       child: Card(
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-//         elevation: 1,
-//         child: Padding(
-//           padding: const EdgeInsets.all(14),
-//           child: Column(
-//             children: [
-//               Icon(icon, color: color, size: 28),
-//               const SizedBox(height: 6),
-//               Text(
-//                 value,
-//                 style: GoogleFonts.montserrat(
-//                   fontSize: 18,
-//                   fontWeight: FontWeight.bold,
-//                   color: Colors.black87,
-//                 ),
-//               ),
-//               Text(
-//                 label,
-//                 style: GoogleFonts.montserrat(
-//                   fontSize: 13,
-//                   color: Colors.black54,
-//                 ),
-//               ),
-//               Text(
-//                 status,
-//                 style: GoogleFonts.montserrat(fontSize: 12, color: Colors.grey),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   // 👉 Thẻ riêng cho NPK
-//   Widget buildNPKCard({
-//     required double n,
-//     required double p,
-//     required double k,
-//   }) {
-//     return Expanded(
-//       child: Card(
-//         elevation: 2,
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-//         child: Padding(
-//           padding: const EdgeInsets.all(12),
-//           child: Row(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               CircleAvatar(
-//                 backgroundColor: Colors.green.withOpacity(0.15),
-//                 child: const Icon(Icons.eco, color: Colors.green),
-//               ),
-//               const SizedBox(width: 12),
-//               Expanded(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       "NPK",
-//                       style: GoogleFonts.montserrat(
-//                         fontSize: 14,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.black87,
-//                       ),
-//                     ),
-//                     const SizedBox(height: 8),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         _NutrientItem(label: "N", value: n.toStringAsFixed(1)),
-//                         _NutrientItem(label: "P", value: p.toStringAsFixed(1)),
-//                         _NutrientItem(label: "K", value: k.toStringAsFixed(1)),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(
-//           "Dữ liệu cảm biến",
-//           style: GoogleFonts.montserrat(
-//             fontSize: 16,
-//             fontWeight: FontWeight.bold,
-//             color: Colors.black87,
-//           ),
-//         ),
-//         const SizedBox(height: 8),
-//         Row(
-//           children: [
-//             buildSensorItem(
-//               Icons.thermostat,
-//               "28°C",
-//               "Nhiệt độ",
-//               "+2°C từ hôm qua",
-//               Colors.orange,
-//             ),
-//             buildSensorItem(
-//               Icons.water_drop,
-//               "65%",
-//               "Độ ẩm đất",
-//               "-5% từ hôm qua",
-//               Colors.blue,
-//             ),
-//           ],
-//         ),
-//         Row(
-//           children: [
-//             buildSensorItem(
-//               Icons.wb_sunny,
-//               "850 lux",
-//               "Ánh sáng",
-//               "+150 lux",
-//               Colors.amber,
-//             ),
-//             buildSensorItem(
-//               Icons.science,
-//               "5.5",
-//               "pH đất",
-//               "Trung tính",
-//               Colors.purple,
-//             ),
-//             buildSensorItem(
-//               Icons.compress, // Icon áp suất khí quyển
-//               "1012 hPa",
-//               "Áp suất không khí",
-//               "Ổn định",
-//               Colors.indigo,
-//             ),
-//           ],
-//         ),
-//         Row(children: [buildNPKCard(n: 45.0, p: 30.0, k: 25.0)]),
-//       ],
-//     );
-//   }
-// }
-
-// // Widget nhỏ cho từng giá trị N, P, K
-// class _NutrientItem extends StatelessWidget {
-//   final String label;
-//   final String value;
-
-//   const _NutrientItem({required this.label, required this.value});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Text(
-//           label,
-//           style: GoogleFonts.montserrat(
-//             fontSize: 13,
-//             fontWeight: FontWeight.bold,
-//             color: Colors.black87,
-//           ),
-//         ),
-//         const SizedBox(height: 4),
-//         Text(
-//           value,
-//           style: GoogleFonts.montserrat(fontSize: 13, color: Colors.black54),
-//         ),
-//       ],
-//     );
-//   }
-// }
 
 class SensorDataCard extends StatefulWidget {
   const SensorDataCard({super.key});
@@ -389,6 +262,28 @@ class SensorDataCard extends StatefulWidget {
 }
 
 class _SensorDataCardState extends State<SensorDataCard> {
+  static final Set<String> _alertedSensors = {};
+
+  // HÀM GỬI CẢNH BÁO
+  void _checkAndAlert(
+    String sensor,
+    double value,
+    AlertLevel level,
+    String label,
+    String unit,
+  ) {
+    final key = '$sensor:${value.toStringAsFixed(1)}';
+    if (level == AlertLevel.danger && !_alertedSensors.contains(key)) {
+      _alertedSensors.add(key);
+      NotificationService.showDangerAlert(
+        "CẢNH BÁO: $label",
+        "$label hiện tại: ${value.toStringAsFixed(1)}$unit – Vượt ngưỡng nguy hiểm!",
+      );
+    } else if (level != AlertLevel.danger) {
+      _alertedSensors.removeWhere((k) => k.startsWith('$sensor:'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -434,48 +329,92 @@ class _SensorDataCardState extends State<SensorDataCard> {
             ); // Lấy giá trị double
             final String moistureDisplay = "$moistureValue%"; // Chuỗi hiển thị
 
+            // === TÍNH MỨC CẢNH BÁO ===
+            final AlertLevel tempLevel = getAlertLevel('temperature', temp);
+            final AlertLevel moistureLevel = getAlertLevel(
+              'soilMoisture',
+              moistureValue,
+            );
+            final AlertLevel lightLevel = getAlertLevel(
+              'light',
+              light.toDouble(),
+            );
+            final AlertLevel phLevel = getAlertLevel('ph', ph);
+            final AlertLevel pressureLevel = getAlertLevel(
+              'pressure',
+              pressure,
+            );
+
+            _checkAndAlert('temperature', temp, tempLevel, "Nhiệt độ", "°C");
+            _checkAndAlert(
+              'soilMoisture',
+              moistureValue,
+              moistureLevel,
+              "Độ ẩm đất",
+              "%",
+            );
+            _checkAndAlert(
+              'light',
+              light.toDouble(),
+              lightLevel,
+              "Ánh sáng",
+              " lux",
+            );
+            _checkAndAlert('ph', ph, phLevel, "pH đất", "");
+            _checkAndAlert(
+              'pressure',
+              pressure,
+              pressureLevel,
+              "Áp suất",
+              " hPa",
+            );
             return Column(
               children: [
                 Row(
                   children: [
                     _buildSensorItem(
-                      Icons.thermostat,
-                      "${temp.toStringAsFixed(1)}°C",
-                      "Nhiệt độ",
-                      _getChange(temp, 28.0),
-                      Colors.red,
+                      icon: Icons.thermostat,
+                      value: "${temp.toStringAsFixed(1)}°C",
+                      label: "Nhiệt độ",
+                      status: _getChange(temp, 28.0),
+                      iconColor: Colors.red,
+                      alertLevel: tempLevel,
                     ),
                     _buildSensorItem(
-                      Icons.water_drop,
-                      moistureDisplay, // Hiển thị: "74.68%"
-                      "Độ ẩm đất",
-                      _getChange(moistureValue, 65), // Tính toán: dùng double
-                      const Color.fromARGB(176, 33, 149, 243),
+                      icon: Icons.water_drop,
+                      value: moistureDisplay,
+                      label: "Độ ẩm đất",
+                      status: _getChange(moistureValue, 65),
+                      iconColor: const Color.fromARGB(176, 33, 149, 243),
+                      alertLevel: moistureLevel,
                     ),
                   ],
                 ),
                 Row(
                   children: [
                     _buildSensorItem(
-                      Icons.wb_sunny,
-                      "$light lux",
-                      "Ánh sáng",
-                      "+150 lux",
-                      Colors.amber,
+                      icon: Icons.wb_sunny,
+                      value: "$light lux",
+                      label: "Ánh sáng",
+                      status: "+150 lux",
+                      iconColor: Colors.amber,
+                      alertLevel: lightLevel,
                     ),
                     _buildSensorItem(
-                      Icons.science,
-                      ph.toStringAsFixed(1),
-                      "pH đất",
-                      _getPhStatus(ph),
-                      Colors.purple,
+                      icon: Icons.science,
+                      value: ph.toStringAsFixed(1),
+                      label: "pH đất",
+                      status: _getPhStatus(ph),
+                      iconColor: Colors.purple,
+                      alertLevel: phLevel,
                     ),
                     _buildSensorItem(
-                      Icons.compress,
-                      "${pressure.toStringAsFixed(0)} hPa",
-                      "Áp suất",
-                      "Ổn định",
-                      const Color.fromARGB(255, 87, 112, 255),
+                      icon: Icons.compress,
+                      value: "${pressure.toStringAsFixed(0)} hPa",
+                      label: "Áp suất",
+                      status: "Ổn định",
+                      iconColor: const Color.fromARGB(255, 87, 112, 255),
+                      alertLevel: pressureLevel,
                     ),
                   ],
                 ),
@@ -489,29 +428,41 @@ class _SensorDataCardState extends State<SensorDataCard> {
     );
   }
 
-  Widget _buildSensorItem(
-    IconData icon,
-    String value,
-    String label,
-    String status,
-    Color color,
-  ) {
+  Widget _buildSensorItem({
+    required IconData icon,
+    required String value,
+    required String label,
+    required String status,
+    required Color iconColor,
+    required AlertLevel alertLevel,
+  }) {
     return Expanded(
       child: Card(
+        color: getAlertColor(alertLevel), // ĐỔI MÀU NỀN
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 1,
+        elevation: alertLevel == AlertLevel.danger ? 6 : 1, // ĐỎ nổi hơn
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
             children: [
-              Icon(icon, color: color, size: 28),
+              Icon(
+                icon,
+                color: alertLevel == AlertLevel.danger
+                    ? Colors.red
+                    : alertLevel == AlertLevel.warning
+                    ? Colors.orange
+                    : iconColor,
+                size: 28,
+              ),
               const SizedBox(height: 6),
               Text(
                 value,
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: alertLevel == AlertLevel.danger
+                      ? Colors.red.shade700
+                      : Colors.black87,
                 ),
               ),
               Text(
@@ -523,7 +474,17 @@ class _SensorDataCardState extends State<SensorDataCard> {
               ),
               Text(
                 status,
-                style: GoogleFonts.montserrat(fontSize: 16, color: Colors.grey),
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  color: alertLevel == AlertLevel.danger
+                      ? Colors.red
+                      : alertLevel == AlertLevel.warning
+                      ? Colors.orange
+                      : Colors.grey,
+                  fontWeight: alertLevel == AlertLevel.danger
+                      ? FontWeight.bold
+                      : null,
+                ),
               ),
             ],
           ),
@@ -542,6 +503,15 @@ class _SensorDataCardState extends State<SensorDataCard> {
           p = (snapshot.data!['P'] as num?)?.toDouble() ?? 0;
           k = (snapshot.data!['K'] as num?)?.toDouble() ?? 0;
         }
+
+        final nLevel = getAlertLevel('N', n);
+        final pLevel = getAlertLevel('P', p);
+        final kLevel = getAlertLevel('K', k);
+
+        // CẢNH BÁO CHO NPK
+        _checkAndAlert('N', n, nLevel, "Nitơ (N)", " mg/kg");
+        _checkAndAlert('P', p, pLevel, "Photpho (P)", " mg/kg");
+        _checkAndAlert('K', k, kLevel, "Kali (K)", " mg/kg");
 
         return Row(
           children: [
@@ -578,14 +548,17 @@ class _SensorDataCardState extends State<SensorDataCard> {
                                 _NutrientItem(
                                   label: "N",
                                   value: n.toStringAsFixed(1),
+                                  alertLevel: nLevel,
                                 ),
                                 _NutrientItem(
                                   label: "P",
                                   value: p.toStringAsFixed(1),
+                                  alertLevel: pLevel,
                                 ),
                                 _NutrientItem(
                                   label: "K",
                                   value: k.toStringAsFixed(1),
+                                  alertLevel: kLevel,
                                 ),
                               ],
                             ),
@@ -631,30 +604,45 @@ class _SensorDataCardState extends State<SensorDataCard> {
 class _NutrientItem extends StatelessWidget {
   final String label;
   final String value;
-  const _NutrientItem({required this.label, required this.value});
+  final AlertLevel alertLevel;
+
+  const _NutrientItem({
+    required this.label,
+    required this.value,
+    required this.alertLevel,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.montserrat(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: getAlertColor(alertLevel),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: GoogleFonts.montserrat(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: alertLevel == AlertLevel.danger
+                  ? Colors.red.shade700
+                  : Colors.black87,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: GoogleFonts.montserrat(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: Colors.black54,
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.montserrat(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black54,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

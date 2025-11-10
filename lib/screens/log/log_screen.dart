@@ -18,7 +18,7 @@ class _LogScreenState extends State<LogScreen> {
       "weather": "Nắng nhẹ",
       "quantity": "2 giờ",
       "cost": "50.000 VNĐ",
-      "images": []
+      "images": [],
     },
     {
       "icon": Icons.eco,
@@ -29,7 +29,7 @@ class _LogScreenState extends State<LogScreen> {
       "weather": "Mây ít",
       "quantity": "20kg",
       "cost": "300.000 VNĐ",
-      "images": []
+      "images": [],
     },
     {
       "icon": Icons.agriculture,
@@ -40,7 +40,7 @@ class _LogScreenState extends State<LogScreen> {
       "weather": "Nắng đẹp",
       "quantity": "150kg",
       "cost": "0 VNĐ",
-      "images": []
+      "images": [],
     },
   ];
 
@@ -62,13 +62,13 @@ class _LogScreenState extends State<LogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      appBar: AppBar(
-        title: const Text("Nhật ký canh tác"),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-      ),
+      // appBar: AppBar(
+      //   title: const Text("Nhật ký canh tác"),
+      //   centerTitle: true,
+      //   elevation: 0,
+      //   backgroundColor: Colors.white,
+      //   foregroundColor: Colors.black,
+      // ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -89,15 +89,16 @@ class _LogScreenState extends State<LogScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 items: ["Tưới nước", "Bón phân", "Thu hoạch", "Phun thuốc"]
-                    .map((e) =>
-                        DropdownMenuItem(value: e, child: Text(e)))
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
                 onChanged: (value) => setState(() => selectedActivity = value),
               ),
@@ -110,15 +111,16 @@ class _LogScreenState extends State<LogScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 items: ["Khu vực A", "Khu vực B", "Nhà kính 1"]
-                    .map((e) =>
-                        DropdownMenuItem(value: e, child: Text(e)))
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
                 onChanged: (value) => setState(() => selectedArea = value),
               ),
@@ -191,7 +193,7 @@ class _LogScreenState extends State<LogScreen> {
                       "weather": "Chưa có",
                       "quantity": quantityController.text,
                       "cost": costController.text,
-                      "images": []
+                      "images": [],
                     });
                     selectedActivity = null;
                     selectedArea = null;
@@ -204,8 +206,10 @@ class _LogScreenState extends State<LogScreen> {
                 label: const Text("Lưu hoạt động"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -227,12 +231,27 @@ class _LogScreenState extends State<LogScreen> {
               ),
               const SizedBox(height: 12),
               _buildStatCard(Icons.task, "Hoạt động tuần này", "12", "+3"),
-              _buildStatCard(Icons.monetization_on, "Chi phí tháng này", "2.5M",
-                  "-200K", Colors.red),
               _buildStatCard(
-                  Icons.grass, "Diện tích canh tác", "1.2ha", "", Colors.green),
-              _buildStatCard(Icons.shopping_basket, "Sản lượng tuần", "450kg",
-                  "+50kg", Colors.orange),
+                Icons.monetization_on,
+                "Chi phí tháng này",
+                "2.5M",
+                "-200K",
+                Colors.red,
+              ),
+              _buildStatCard(
+                Icons.grass,
+                "Diện tích canh tác",
+                "1.2ha",
+                "",
+                Colors.green,
+              ),
+              _buildStatCard(
+                Icons.shopping_basket,
+                "Sản lượng tuần",
+                "450kg",
+                "+50kg",
+                Colors.orange,
+              ),
               const SizedBox(height: 24),
 
               // Gợi ý & nhắc nhở
@@ -241,12 +260,24 @@ class _LogScreenState extends State<LogScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              _buildReminder(Icons.lightbulb_outline, Colors.blue, "Gợi ý AI",
-                  "Độ ẩm đất khu vực A đang thấp, nên tưới vào sáng sớm"),
-              _buildReminder(Icons.calendar_today, Colors.orange, "Lịch canh tác",
-                  "Đến thời gian bón phân cho cây cà chua (3 ngày nữa)"),
-              _buildReminder(Icons.cloud, Colors.green, "Thời tiết",
-                  "Dự báo mưa 2 ngày tới, hoãn việc phun thuốc"),
+              _buildReminder(
+                Icons.lightbulb_outline,
+                Colors.blue,
+                "Gợi ý AI",
+                "Độ ẩm đất khu vực A đang thấp, nên tưới vào sáng sớm",
+              ),
+              _buildReminder(
+                Icons.calendar_today,
+                Colors.orange,
+                "Lịch canh tác",
+                "Đến thời gian bón phân cho cây cà chua (3 ngày nữa)",
+              ),
+              _buildReminder(
+                Icons.cloud,
+                Colors.green,
+                "Thời tiết",
+                "Dự báo mưa 2 ngày tới, hoãn việc phun thuốc",
+              ),
             ],
           ),
         ),
@@ -275,8 +306,12 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   Widget _buildStatCard(
-      IconData icon, String title, String value, String change,
-      [Color color = Colors.blue]) {
+    IconData icon,
+    String title,
+    String value,
+    String change, [
+    Color color = Colors.blue,
+  ]) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -297,7 +332,11 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   Widget _buildReminder(
-      IconData icon, Color color, String title, String subtitle) {
+    IconData icon,
+    Color color,
+    String title,
+    String subtitle,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
