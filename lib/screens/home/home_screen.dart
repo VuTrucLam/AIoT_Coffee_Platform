@@ -5,6 +5,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:iot_thi/services/weather_service.dart';
 import 'package:iot_thi/services/sensor_service.dart';
 import 'package:iot_thi/services/notification_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:iot_thi/services/auth_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -251,7 +254,7 @@ Color getAlertColor(AlertLevel level) {
 }
 
 //
-// ====== WIDGET THẺ CHÀO BUỔI SÁNG ======
+// ====== WIDGET SENSOR ======
 //
 
 class SensorDataCard extends StatefulWidget {
@@ -262,25 +265,59 @@ class SensorDataCard extends StatefulWidget {
 }
 
 class _SensorDataCardState extends State<SensorDataCard> {
-  static final Set<String> _alertedSensors = {};
+  final Map<String, double> _previousValues = {};
+  final Set<String> _alertedKeys = {}; // Chỉ lưu key đã cảnh báo
 
-  // HÀM GỬI CẢNH BÁO
-  void _checkAndAlert(
+  // HÀM GỬI CẢNH BÁO – ĐÃ SỬA: async + Future<void>
+  Future<void> _checkAndAlert(
     String sensor,
     double value,
     AlertLevel level,
     String label,
     String unit,
-  ) {
-    final key = '$sensor:${value.toStringAsFixed(1)}';
-    if (level == AlertLevel.danger && !_alertedSensors.contains(key)) {
-      _alertedSensors.add(key);
+  ) async {
+    final key = '$sensor:$level'; // Key = sensor + mức cảnh báo
+    final prevValue = _previousValues[sensor] ?? value;
+
+    // Chỉ gửi nếu:
+    // 1. Mức cảnh báo thay đổi (từ safe → danger, warning → danger, v.v.)
+    // 2. Chưa từng gửi ở mức này
+    if (level == AlertLevel.danger && !_alertedKeys.contains(key)) {
+      _alertedKeys.add(key);
+
       NotificationService.showDangerAlert(
         "CẢNH BÁO: $label",
-        "$label hiện tại: ${value.toStringAsFixed(1)}$unit – Vượt ngưỡng nguy hiểm!",
+        "$label: ${value.toStringAsFixed(1)}$unit – Vượt ngưỡng nguy hiểm!",
       );
-    } else if (level != AlertLevel.danger) {
-      _alertedSensors.removeWhere((k) => k.startsWith('$sensor:'));
+
+      final token = await AuthService.getToken();
+      if (token != null && token.isNotEmpty) {
+        try {
+          await http.post(
+            Uri.parse('${AuthService.baseUrl}/api/notifications'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode({
+              'title': 'CẢNH BÁO: $label',
+              'body': '$label: ${value.toStringAsFixed(1)}$unit – Nguy hiểm!',
+              'sensor': sensor,
+              'level': 'danger',
+            }),
+          );
+        } catch (e) {
+          debugPrint("Lỗi gửi cảnh báo: $e");
+        }
+      }
+    }
+
+    // Cập nhật giá trị cũ
+    _previousValues[sensor] = value;
+
+    // Reset nếu trở về safe
+    if (level == AlertLevel.safe) {
+      _alertedKeys.removeWhere((k) => k.startsWith('$sensor:'));
     }
   }
 
@@ -345,29 +382,39 @@ class _SensorDataCardState extends State<SensorDataCard> {
               pressure,
             );
 
-            _checkAndAlert('temperature', temp, tempLevel, "Nhiệt độ", "°C");
-            _checkAndAlert(
-              'soilMoisture',
-              moistureValue,
-              moistureLevel,
-              "Độ ẩm đất",
-              "%",
-            );
-            _checkAndAlert(
-              'light',
-              light.toDouble(),
-              lightLevel,
-              "Ánh sáng",
-              " lux",
-            );
-            _checkAndAlert('ph', ph, phLevel, "pH đất", "");
-            _checkAndAlert(
-              'pressure',
-              pressure,
-              pressureLevel,
-              "Áp suất",
-              " hPa",
-            );
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              if (mounted) {
+                await _checkAndAlert(
+                  'temperature',
+                  temp,
+                  tempLevel,
+                  "Nhiệt độ",
+                  "°C",
+                );
+                await _checkAndAlert(
+                  'soilMoisture',
+                  moistureValue,
+                  moistureLevel,
+                  "Độ ẩm đất",
+                  "%",
+                );
+                await _checkAndAlert(
+                  'light',
+                  light.toDouble(),
+                  lightLevel,
+                  "Ánh sáng",
+                  " lux",
+                );
+                await _checkAndAlert('ph', ph, phLevel, "pH đất", "");
+                await _checkAndAlert(
+                  'pressure',
+                  pressure,
+                  pressureLevel,
+                  "Áp suất",
+                  " hPa",
+                );
+              }
+            });
             return Column(
               children: [
                 Row(
@@ -508,10 +555,11 @@ class _SensorDataCardState extends State<SensorDataCard> {
         final pLevel = getAlertLevel('P', p);
         final kLevel = getAlertLevel('K', k);
 
-        // CẢNH BÁO CHO NPK
-        _checkAndAlert('N', n, nLevel, "Nitơ (N)", " mg/kg");
-        _checkAndAlert('P', p, pLevel, "Photpho (P)", " mg/kg");
-        _checkAndAlert('K', k, kLevel, "Kali (K)", " mg/kg");
+        if (snapshot.hasData && snapshot.data != null) {
+          _checkAndAlert('N', n, nLevel, "Nitơ (N)", " mg/kg");
+          _checkAndAlert('P', p, pLevel, "Photpho (P)", " mg/kg");
+          _checkAndAlert('K', k, kLevel, "Kali (K)", " mg/kg");
+        }
 
         return Row(
           children: [

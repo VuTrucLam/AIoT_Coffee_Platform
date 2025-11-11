@@ -8,6 +8,11 @@ import 'package:iot_thi/screens/user/profile.dart';
 class AuthService {
   static const String baseUrl = "http://127.0.0.1:5000";
 
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("access_token");
+  }
+
   static Future<void> showUserProfile(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("access_token");

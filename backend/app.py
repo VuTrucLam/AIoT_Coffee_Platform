@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from routes.auth_routes import auth_bp
+from routes.notifications import notifications_bp
 import os
 from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
@@ -11,6 +12,7 @@ jwt = JWTManager(app)
 CORS(app)
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(notifications_bp)
 
 @app.route("/")
 def home():

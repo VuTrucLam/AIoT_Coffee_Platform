@@ -5,9 +5,11 @@ import 'log/log_screen.dart';
 import 'production/production_screen.dart';
 import 'analytics/analytics_screen.dart';
 import 'package:iot_thi/screens/user/profile.dart';
+import 'package:iot_thi/screens/user/notifications_screen.dart';
 import 'control/control_screen.dart';
 import 'package:iot_thi/screens/user/login.dart';
 import 'package:iot_thi/services/auth_service.dart';
+import '../widgets/notification_bell.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -47,6 +49,15 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  // Trong _MainScreenState
+  void _redirectToLogin(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    );
   }
 
   @override
@@ -89,34 +100,27 @@ class _MainScreenState extends State<MainScreen> {
         ),
         actions: [
           // Nút thông báo + badge đỏ
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              IconButton(
-                onPressed: () {},
+          FutureBuilder<String?>(
+            future: AuthService.getToken(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                );
+              }
+
+              if (snapshot.hasData && snapshot.data != null) {
+                return NotificationBell(token: snapshot.data!);
+              }
+
+              // Chưa đăng nhập → chỉ icon, không badge
+              return IconButton(
+                onPressed: () => _redirectToLogin(context),
                 icon: const Icon(Icons.notifications_none),
                 color: Colors.black87,
-              ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Text(
-                    "3",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              );
+            },
           ),
           // Nút profile
           IconButton(
