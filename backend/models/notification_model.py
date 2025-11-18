@@ -5,8 +5,8 @@ class NotificationModel:
     def __init__(self, title, body, sensor=None, level="danger", user_id=None):
         self.title = title
         self.body = body
-        self.sensor = sensor  # e.g., "temperature"
-        self.level = level    # "danger", "warning"
+        self.sensor = sensor  
+        self.level = level   
         self.user_id = user_id
         self.timestamp = datetime.utcnow()
         self.is_read = False

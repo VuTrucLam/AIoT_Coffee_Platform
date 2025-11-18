@@ -4,3 +4,4 @@ flask-cors
 python-dotenv
 bcrypt
 flask-jwt-extended
+python-dateutil

@@ -266,9 +266,8 @@ class SensorDataCard extends StatefulWidget {
 
 class _SensorDataCardState extends State<SensorDataCard> {
   final Map<String, double> _previousValues = {};
-  final Set<String> _alertedKeys = {}; // Chỉ lưu key đã cảnh báo
+  final Set<String> _alertedKeys = {};
 
-  // HÀM GỬI CẢNH BÁO – ĐÃ SỬA: async + Future<void>
   Future<void> _checkAndAlert(
     String sensor,
     double value,
@@ -279,9 +278,6 @@ class _SensorDataCardState extends State<SensorDataCard> {
     final key = '$sensor:$level'; // Key = sensor + mức cảnh báo
     final prevValue = _previousValues[sensor] ?? value;
 
-    // Chỉ gửi nếu:
-    // 1. Mức cảnh báo thay đổi (từ safe → danger, warning → danger, v.v.)
-    // 2. Chưa từng gửi ở mức này
     if (level == AlertLevel.danger && !_alertedKeys.contains(key)) {
       _alertedKeys.add(key);
 
