@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // BẮT BUỘC
 import 'package:iot_thi/screens/user/register.dart';
+import 'package:iot_thi/services/sensor_history_service.dart';
 import 'core/app_theme.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,6 +14,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService.init();
   await initializeDateFormatting('vi_VN', null);
+  SensorHistoryService.startListening();
+
 
   runApp(const FarmSmartApp());
 }
