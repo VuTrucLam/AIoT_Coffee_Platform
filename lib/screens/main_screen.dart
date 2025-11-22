@@ -4,8 +4,6 @@ import 'home/home_screen.dart';
 import 'log/log_screen.dart';
 import 'production/production_screen.dart';
 import 'analytics/analytics_screen.dart';
-import 'package:iot_thi/screens/user/profile.dart';
-import 'package:iot_thi/screens/user/notifications_screen.dart';
 import 'control/control_screen.dart';
 import 'package:iot_thi/screens/user/login.dart';
 import 'package:iot_thi/services/auth_service.dart';
@@ -21,37 +19,19 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // final List<Widget> _screens = const [
-  //   HomeScreen(),
-  //   LogScreen(),
-  //   ProductionScreen(),
-  //   AnalyticsScreen(),
-  //   ControlScreen(),
-  // ];
-
-  final List<String> _titles = const [
-    "Trang chủ",
-    "Nhật ký",
-    "Sản xuất",
-    "Phân tích",
-    "Điều khiển",
-  ];
-
+  // KHÔNG dùng const ở đây để tránh lỗi state không cập nhật
   final List<Widget> _screens = [
-    const HomeScreen(),
-    const LogScreen(),
+    HomeScreen(),
+    LogScreen(),
     ProductionScreen(),
     AnalyticsScreen(),
-    const ControlScreen(),
+    ControlScreen(),
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
   }
 
-  // Trong _MainScreenState
   void _redirectToLogin(BuildContext context) {
     Navigator.pushAndRemoveUntil(
       context,
@@ -72,7 +52,6 @@ class _MainScreenState extends State<MainScreen> {
         title: Row(
           children: [
             const SizedBox(width: 10),
-            // Logo Gradient
             Container(
               width: 36,
               height: 36,
@@ -87,7 +66,6 @@ class _MainScreenState extends State<MainScreen> {
               child: const Icon(Icons.menu_book, color: Colors.white, size: 20),
             ),
             const SizedBox(width: 12),
-            // Tên app FarmSmart
             Text(
               "FarmSmart",
               style: GoogleFonts.montserrat(
@@ -99,7 +77,6 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
         actions: [
-          // Nút thông báo + badge đỏ
           FutureBuilder<String?>(
             future: AuthService.getToken(),
             builder: (context, snapshot) {
@@ -114,7 +91,6 @@ class _MainScreenState extends State<MainScreen> {
                 return NotificationBell(token: snapshot.data!);
               }
 
-              // Chưa đăng nhập → chỉ icon, không badge
               return IconButton(
                 onPressed: () => _redirectToLogin(context),
                 icon: const Icon(Icons.notifications_none),
@@ -122,7 +98,6 @@ class _MainScreenState extends State<MainScreen> {
               );
             },
           ),
-          // Nút profile
           IconButton(
             onPressed: () {
               AuthService.showUserProfile(context);
@@ -133,7 +108,13 @@ class _MainScreenState extends State<MainScreen> {
           const SizedBox(width: 10),
         ],
       ),
-      body: _screens[_selectedIndex],
+
+      // ⛔ FIX LỖI QUAN TRỌNG: KHÔNG RELOAD MÀN HÌNH KHI ĐỔI TAB
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
+      ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

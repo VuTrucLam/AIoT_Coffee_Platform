@@ -50,24 +50,22 @@ class _ControlScreenState extends State<ControlScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: ListView(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 12),
-              _buildStatusOverview(),
-              const SizedBox(height: 16),
-              _buildDeviceControlSection(),
-              const SizedBox(height: 20),
-              _buildAutomationRulesSection(),
-              const SizedBox(height: 20),
-              _buildScheduleSection(),
-              const SizedBox(height: 20),
-              _buildDeviceStatusSection(),
-            ],
-          ),
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 12),
+            _buildStatusOverview(),
+            const SizedBox(height: 16),
+            _buildDeviceControlSection(),
+            const SizedBox(height: 20),
+            _buildAutomationRulesSection(),
+            const SizedBox(height: 20),
+            _buildScheduleSection(),
+            const SizedBox(height: 20),
+            _buildDeviceStatusSection(),
+            const SizedBox(height: 80),
+          ],
         ),
       ),
     );
@@ -122,10 +120,27 @@ class _ControlScreenState extends State<ControlScreen> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: const [
-          _StatusItem(color: Colors.green, label: "Tự động", count: 5),
-          _StatusItem(color: Colors.orange, label: "Thủ công", count: 3),
-          _StatusItem(color: Colors.red, label: "Offline", count: 2),
+        children: [
+          InkWell(
+            onTap: () => print("Nhấn: Tự động"),
+            child: const _StatusItem(color: Colors.green, label: "Tự động", count: 5),
+          ),
+          InkWell(
+            onTap: () => print("Nhấn: Bật Tưới"),
+            child: const _StatusItem(color: Colors.green, label: "Bật Tưới", count: 5),
+          ),
+          InkWell(
+            onTap: () => print("Nhấn: Thủ công"),
+            child: const _StatusItem(color: Colors.orange, label: "Thủ công", count: 3),
+          ),
+          InkWell(
+            onTap: () => print("Nhấn: Tắt Tưới"),
+            child: const _StatusItem(color: Colors.red, label: "Tắt Tưới", count: 5),
+          ),
+          InkWell(
+            onTap: () => print("Nhấn: Offline"),
+            child: const _StatusItem(color: Colors.red, label: "Offline", count: 2),
+          ),
         ],
       ),
     );
@@ -280,64 +295,112 @@ class _DeviceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title + Online/Auto + Buttons
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              // Icon + Name + Location
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(device['icon'], color: Colors.deepPurple, size: 30),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          device['name'],
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        Text(
+                          device['location'],
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Online + Auto + Buttons
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Icon(device['icon'], color: Colors.deepPurple, size: 30),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      Text(
-                        device['name'],
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: device['online'] ? Colors.green[100] : Colors.red[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          device['online'] ? "Online" : "Offline",
+                          style: TextStyle(
+                            color: device['online'] ? Colors.green : Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                      Text(
-                        device['location'],
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
-                      )
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: device['auto'] ? Colors.deepPurple[50] : Colors.orange[50],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          device['auto'] ? "Tự động" : "Thủ công",
+                          style: TextStyle(
+                            color: device['auto'] ? Colors.deepPurple : Colors.orange,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => print("Bật bơm thủ công"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        ),
+                        child: const Text(
+                          "Bật bơm",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      ElevatedButton(
+                        onPressed: () => print("Tắt bơm thủ công"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        ),
+                        child: const Text(
+                          "Tắt bơm",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
                     ],
                   )
                 ],
               ),
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: device['online'] ? Colors.green[100] : Colors.red[100],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      device['online'] ? "Online" : "Offline",
-                      style: TextStyle(
-                        color: device['online'] ? Colors.green : Colors.red,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: device['auto'] ? Colors.deepPurple[50] : Colors.orange[50],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      device['auto'] ? "Tự động" : "Thủ công",
-                      style: TextStyle(
-                        color: device['auto'] ? Colors.deepPurple : Colors.orange,
-                        fontSize: 12,
-                      ),
-                    ),
-                  )
-                ],
-              )
             ],
           ),
-          const SizedBox(height: 8),
+
+          const SizedBox(height: 12),
+
+          // Switch trạng thái
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -345,9 +408,11 @@ class _DeviceCard extends StatelessWidget {
               CupertinoSwitch(
                 value: device['online'],
                 onChanged: (_) {},
-              )
+              ),
             ],
           ),
+
+          // Switch tự động
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -355,10 +420,13 @@ class _DeviceCard extends StatelessWidget {
               CupertinoSwitch(
                 value: device['auto'],
                 onChanged: (_) {},
-              )
+              ),
             ],
           ),
+
           const SizedBox(height: 8),
+
+          // Slider
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -373,7 +441,7 @@ class _DeviceCard extends StatelessWidget {
               ),
               Text("${device['value']}%"),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -385,7 +453,8 @@ class _AutomationCard extends StatelessWidget {
   final String condition;
   final String action;
 
-  const _AutomationCard({required this.title, required this.condition, required this.action});
+  const _AutomationCard(
+      {required this.title, required this.condition, required this.action});
 
   @override
   Widget build(BuildContext context) {
@@ -408,8 +477,10 @@ class _AutomationCard extends StatelessWidget {
         children: [
           Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
-          Text("Điều kiện: $condition", style: const TextStyle(color: Colors.grey)),
-          Text("Hành động: $action", style: const TextStyle(color: Colors.grey)),
+          Text("Điều kiện: $condition",
+              style: const TextStyle(color: Colors.grey)),
+          Text("Hành động: $action",
+              style: const TextStyle(color: Colors.grey)),
         ],
       ),
     );
@@ -453,8 +524,10 @@ class _ScheduleCard extends StatelessWidget {
             children: [
               Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              Text("Thời gian: $time", style: const TextStyle(color: Colors.grey)),
-              Text("Lặp lại: $repeat", style: const TextStyle(color: Colors.grey)),
+              Text("Thời gian: $time",
+                  style: const TextStyle(color: Colors.grey)),
+              Text("Lặp lại: $repeat",
+                  style: const TextStyle(color: Colors.grey)),
             ],
           ),
           Text(duration, style: const TextStyle(fontWeight: FontWeight.bold)),
