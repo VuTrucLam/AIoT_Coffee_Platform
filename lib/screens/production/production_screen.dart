@@ -11,16 +11,16 @@ class ProductionScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Quản lý sản xuất & Tài chính",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            "Theo dõi chi phí, sản lượng và lợi nhuận từng mùa vụ",
-            style: TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 16),
+          // const Text(
+          //   "Quản lý sản xuất & Tài chính",
+          //   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          // ),
+          // const SizedBox(height: 4),
+          // const Text(
+          //   "Theo dõi chi phí, sản lượng và lợi nhuận từng mùa vụ",
+          //   style: TextStyle(color: Colors.grey),
+          // ),
+          // const SizedBox(height: 16),
 
           // Bộ lọc
           SingleChildScrollView(
@@ -41,29 +41,29 @@ class ProductionScreen extends StatelessWidget {
                   ],
                   onChanged: (_) {},
                 ),
-                const SizedBox(width: 10),
-                OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.calendar_today, size: 18),
-                  label: const Text("Chọn thời gian"),
-                ),
-                const SizedBox(width: 10),
-                OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
-                  label: const Text("Xuất báo cáo"),
-                ),
-                const SizedBox(width: 10),
-                IntrinsicWidth(
-                  // ← THÊM DÒNG NÀY
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
-                    child: const Text("Phân tích AI"),
-                  ),
-                ),
+                // const SizedBox(width: 10),
+                // OutlinedButton.icon(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.calendar_today, size: 18),
+                //   label: const Text("Chọn thời gian"),
+                // ),
+                // const SizedBox(width: 10),
+                // OutlinedButton.icon(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+                //   label: const Text("Xuất báo cáo"),
+                // ),
+                // const SizedBox(width: 10),
+                // IntrinsicWidth(
+                //   // ← THÊM DÒNG NÀY
+                //   child: ElevatedButton(
+                //     onPressed: () {},
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.blue,
+                //     ),
+                //     child: const Text("Phân tích AI"),
+                // ),
+                // ),
               ],
             ),
           ),
@@ -120,75 +120,75 @@ class ProductionScreen extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Biểu đồ sản lượng
-          const Text(
-            "Phân tích sản lượng",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 280,
-            child: BarChart(
-              BarChartData(
-                maxY: 3500,
-                minY: 0,
-                gridData: FlGridData(show: true),
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        switch (value.toInt()) {
-                          case 0:
-                            return Text("Cà chua"); // Không const
-                          case 1:
-                            return Text("Rau xanh");
-                          case 2:
-                            return Text("Dưa chuột");
-                          case 3:
-                            return Text("Ớt");
-                        }
-                        return const Text("");
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true, reservedSize: 35),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                barGroups: [
-                  _barGroup(0, 2300, 2800, 3000),
-                  _barGroup(1, 1000, 1200, 1400),
-                  _barGroup(2, 1600, 1800, 2000),
-                  _barGroup(3, 700, 800, 900),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
+          // const Text(
+          //   "Phân tích sản lượng",
+          //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          // ),
+          // const SizedBox(height: 16),
+          // SizedBox(
+          //   height: 280,
+          //   child: BarChart(
+          //     BarChartData(
+          //       maxY: 3500,
+          //       minY: 0,
+          //       gridData: FlGridData(show: true),
+          //       titlesData: FlTitlesData(
+          //         bottomTitles: AxisTitles(
+          //           sideTitles: SideTitles(
+          //             showTitles: true,
+          //             getTitlesWidget: (value, meta) {
+          //               switch (value.toInt()) {
+          //                 case 0:
+          //                   return Text("Cà chua"); // Không const
+          //                 case 1:
+          //                   return Text("Rau xanh");
+          //                 case 2:
+          //                   return Text("Dưa chuột");
+          //                 case 3:
+          //                   return Text("Ớt");
+          //               }
+          //               return const Text("");
+          //             },
+          //           ),
+          //         ),
+          //         leftTitles: AxisTitles(
+          //           sideTitles: SideTitles(showTitles: true, reservedSize: 35),
+          //         ),
+          //       ),
+          //       borderData: FlBorderData(show: false),
+          //       barGroups: [
+          //         _barGroup(0, 2300, 2800, 3000),
+          //         _barGroup(1, 1000, 1200, 1400),
+          //         _barGroup(2, 1600, 1800, 2000),
+          //         _barGroup(3, 700, 800, 900),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 24),
 
-          // Biểu đồ tài chính theo tháng
-          const Text(
-            "Tổng quan tài chính theo tháng",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 260,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(show: true),
-                titlesData: FlTitlesData(show: true),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  _lineChart([2, 3, 4, 4.5, 5, 6, 7, 8], Colors.green),
-                  _lineChart([1.5, 2, 2.5, 3, 3.5, 3.8, 4, 4.5], Colors.red),
-                  _lineChart([1, 1.5, 2, 2.2, 2.8, 3.2, 3.5, 4], Colors.blue),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 40),
+          // // Biểu đồ tài chính theo tháng
+          // const Text(
+          //   "Tổng quan tài chính theo tháng",
+          //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          // ),
+          // const SizedBox(height: 16),
+          // SizedBox(
+          //   height: 260,
+          //   child: LineChart(
+          //     LineChartData(
+          //       gridData: FlGridData(show: true),
+          //       titlesData: FlTitlesData(show: true),
+          //       borderData: FlBorderData(show: false),
+          //       lineBarsData: [
+          //         _lineChart([2, 3, 4, 4.5, 5, 6, 7, 8], Colors.green),
+          //         _lineChart([1.5, 2, 2.5, 3, 3.5, 3.8, 4, 4.5], Colors.red),
+          //         _lineChart([1, 1.5, 2, 2.2, 2.8, 3.2, 3.5, 4], Colors.blue),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 40),
         ],
       ),
     );
@@ -247,30 +247,30 @@ class ProductionScreen extends StatelessWidget {
     );
   }
 
-  // Biểu đồ cột
-  BarChartGroupData _barGroup(int x, double y1, double y2, double y3) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(toY: y1, color: Colors.grey, width: 10),
-        BarChartRodData(toY: y2, color: Colors.blue, width: 10),
-        BarChartRodData(toY: y3, color: Colors.orange, width: 10),
-      ],
-    );
-  }
+  // // Biểu đồ cột
+  // BarChartGroupData _barGroup(int x, double y1, double y2, double y3) {
+  //   return BarChartGroupData(
+  //     x: x,
+  //     barRods: [
+  //       BarChartRodData(toY: y1, color: Colors.grey, width: 10),
+  //       BarChartRodData(toY: y2, color: Colors.blue, width: 10),
+  //       BarChartRodData(toY: y3, color: Colors.orange, width: 10),
+  //     ],
+  //   );
+  // }
 
-  // Biểu đồ đường
-  LineChartBarData _lineChart(List<double> values, Color color) {
-    return LineChartBarData(
-      spots: values
-          .asMap()
-          .entries
-          .map((e) => FlSpot(e.key.toDouble(), e.value))
-          .toList(),
-      isCurved: true,
-      color: color,
-      barWidth: 3,
-      belowBarData: BarAreaData(show: false),
-    );
-  }
+  // // Biểu đồ đường
+  // LineChartBarData _lineChart(List<double> values, Color color) {
+  //   return LineChartBarData(
+  //     spots: values
+  //         .asMap()
+  //         .entries
+  //         .map((e) => FlSpot(e.key.toDouble(), e.value))
+  //         .toList(),
+  //     isCurved: true,
+  //     color: color,
+  //     barWidth: 3,
+  //     belowBarData: BarAreaData(show: false),
+  //   );
+  // }
 }

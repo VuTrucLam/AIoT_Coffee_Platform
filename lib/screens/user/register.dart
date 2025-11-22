@@ -170,8 +170,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextField(
                   controller: farmController,
                   decoration: InputDecoration(
-                    labelText: "Tên trang trại",
-                    hintText: "Trang trại ABC",
+                    labelText: "Tên vườn",
+                    hintText: "Trang vườn ABC",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
