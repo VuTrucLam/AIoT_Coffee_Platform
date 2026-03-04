@@ -1,13 +1,13 @@
 # AIoT Coffee Platform
 
-![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat-square&logo=flutter&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black)
-![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&logo=cplusplus&logoColor=white)
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://cplusplus.com/)
 
 
-[![Author](https://img.shields.io/badge/Author-VuTrucLam-blue?style=flat-square&logo=github)](https://github.com/VuTrucLam)
-[![Contributors](https://img.shields.io/github/contributors/VuTrucLam/AIoT_Coffee_Platform?style=flat-square)](https://github.com/VuTrucLam/AIoT_Coffee_Platform/graphs/contributors)
+[![Author](https://img.shields.io/badge/Author-VuTrucLam-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VuTrucLam)
+[![Contributors](https://img.shields.io/github/contributors/VuTrucLam/AIoT_Coffee_Platform?style=for-the-badge)](https://github.com/VuTrucLam/AIoT_Coffee_Platform/graphs/contributors)
 
 
 ## Tổng Quan
