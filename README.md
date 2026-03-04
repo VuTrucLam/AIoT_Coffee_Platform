@@ -116,17 +116,7 @@ git clone https://github.com/VuTrucLam/AIoT_Coffee_Platform.git
 cd AIoT_Coffee_Platform
 ```
 
-### 2. Install dependencies
-
-```
-flutter pub get
-```
-```
-pip install -r requirements.txt
-```
-
-### 3. Run
-Backend
+### 2. Backend Setup
 ```
 cd backend
 ```
@@ -135,12 +125,20 @@ Khởi tạo môi trường ảo
 python -m venv venv
 ```
 ```
-venv/Scripts/activate
+venv\Scripts\activate
 ```
+```
+pip install -r requirements.txt
+```
+
+### 3. Run
+
 ```
 python app.py
 ```
-Flutter
+```
+flutter pub get
+```
 ```
 flutter run #mobile
 ```
