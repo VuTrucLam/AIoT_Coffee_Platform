@@ -158,7 +158,7 @@ flutter run -d chrome #web
 
 
 
-**Built with ❤️ by VuTrucLam & Community**
+**Built with ❤️ by VuTrucLam & Teams**
 
 </div>
 
